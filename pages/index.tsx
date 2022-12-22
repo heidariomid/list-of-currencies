@@ -3,15 +3,9 @@ import {dehydrate, QueryClient, useQuery} from 'react-query';
 import axios from 'axios';
 import Currencies from '../components/Lists/Currencies';
 import Pagination from '../components/Pagination/Pagination';
-import ToggleBtn from '../components/Button/ToggleBtn';
-import {useCurrentTheme} from '../hooks/useCurrentTheme';
-import SearchBar from '../components/Search/SearchCrypto';
+import Header from '../components/Header/Header';
 
 const Home = () => {
-	const {currentTheme} = useCurrentTheme();
-	const setCurrentPageHandler = () => {
-		console.log('clicked');
-	};
 	return (
 		<>
 			<Head>
@@ -21,14 +15,8 @@ const Home = () => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main>
-				<div className='flex  mt-6 max-w-screen-md md:max-w-screen-xl  justify-between items-center mx-auto px-20'>
-					<SearchBar />
-					<h1 className={`  ${currentTheme === 'dark' ? 'text-white' : 'text-black'}   font-bold   mr-48 text-xl  `}>Cryptocurrency Prices</h1>
-
-					<ToggleBtn />
-				</div>
+				<Header />
 				<Currencies />
-				<Pagination totalPages={4} currentPage={1} setCurrentPage={setCurrentPageHandler} />
 			</main>
 		</>
 	);

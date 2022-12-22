@@ -2,13 +2,15 @@
 import {faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 export type PaginationProps = {
-	totalPages: number;
+	total: number;
 	currentPage: number;
+	perPage: number;
 	setCurrentPage: (page: number) => void;
+	isPreviousData: boolean;
 };
-const Pagination = ({totalPages, currentPage, setCurrentPage}: PaginationProps) => {
+const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData}: PaginationProps) => {
 	const isDark = false;
-
+	const totalPages = Math.ceil(total / perPage);
 	const ButtonHandler = ({setCurrentPage, page}: any) => {
 		if (totalPages === currentPage) {
 			return (
@@ -84,7 +86,7 @@ const Pagination = ({totalPages, currentPage, setCurrentPage}: PaginationProps) 
 				})}
 				{currentPage !== totalPages && (
 					<button
-						disabled={currentPage === totalPages}
+						disabled={currentPage === totalPages || isPreviousData}
 						onClick={() => setCurrentPage(currentPage + 1)}
 						className=' relative inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>

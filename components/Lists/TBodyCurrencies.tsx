@@ -1,7 +1,7 @@
 import {CurrencyListProps} from '../../interfaces/ICurrencyInfo';
 import CurrencyFormat from 'react-currency-format';
 
-const CurrencyList = ({currency, totalCurrency}: CurrencyListProps) => {
+const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 	const orderStatusStyle = (change: number) => {
 		let bgColor;
 		if (change > 0) {
@@ -14,11 +14,11 @@ const CurrencyList = ({currency, totalCurrency}: CurrencyListProps) => {
 		return bgColor;
 	};
 	return (
-		<tbody className='bg-white divide-y divide-gray-200'>
+		<tbody className='bg-white divide-y divide-gray-200 dark:bg-zinc-900'>
 			{currency?.id && (
 				<tr key={currency.id}>
 					{/*  show number of currencies from 1 to totalCurrency length */}
-					<td className='pl-6  whitespace-nowrap text-sm text-gray-500'>{totalCurrency + 1}</td>
+					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-white'>{totalCurrency + 1}</td>
 
 					<td className='px-6 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>
@@ -26,13 +26,13 @@ const CurrencyList = ({currency, totalCurrency}: CurrencyListProps) => {
 								<img className='h-10 w-10 rounded-full' src={currency.image} alt='' />
 							</div>
 							<div className='ml-4'>
-								<div className='text-sm font-medium text-gray-900'>{currency.name}</div>
-								<div className='text-sm font-medium text-gray-500 uppercase'>{currency.symbol}</div>
+								<div className='text-sm font-medium text-gray-900 dark:text-white'>{currency.name}</div>
+								<div className='text-sm font-medium text-gray-500 dark:text-white uppercase'>{currency.symbol}</div>
 							</div>
 						</div>
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap'>
-						<div className='text-sm text-gray-900'>
+						<div className='text-sm text-gray-900 dark:text-white'>
 							<CurrencyFormat value={currency?.current_price?.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 						</div>
 					</td>
@@ -70,13 +70,13 @@ const CurrencyList = ({currency, totalCurrency}: CurrencyListProps) => {
 						</div>
 					</td>
 
-					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
 						<CurrencyFormat value={currency?.market_cap?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 					</td>
-					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
 						<CurrencyFormat value={currency?.total_volume?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 					</td>
-					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right'>
+					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white text-right'>
 						<CurrencyFormat value={currency?.circulating_supply?.toFixed(0)} displayType={'text'} thousandSeparator={true} />
 						<span className='text-gray-400 ml-2 uppercase'>{currency.symbol}</span>
 					</td>
@@ -86,4 +86,4 @@ const CurrencyList = ({currency, totalCurrency}: CurrencyListProps) => {
 	);
 };
 
-export default CurrencyList;
+export default TBodyCurrencies;

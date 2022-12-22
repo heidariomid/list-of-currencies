@@ -1,14 +1,28 @@
+import {useState} from 'react';
 import {QueryClient, useQuery} from 'react-query';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchCurrencies} from '../../services/axios';
+import {fetchCurrencies, fetchCurrenciesLength} from '../../services/axios';
 import Skeleton from '../Loading/Skeleton';
-import CurrencyList from './CurrencyList';
+import Pagination from '../Pagination/Pagination';
+import TBodyCurrencies from './TBodyCurrencies';
+import THeadCurrencies from './THeadCurrencies';
 const Currencies = () => {
 	const queryClient = new QueryClient();
+	const [page, setPage] = useState<number>(1);
+	const perPage = 10;
+	// useQuery to fetch data length
+	const {data: totalCurrency} = useQuery(['totalCurrency'], fetchCurrenciesLength);
 	// useQuery to fetch data
-	const {data, isLoading, isError} = useQuery('currencies', fetchCurrencies, {staleTime: 5000});
+	const {
+		data: currencies,
+		isLoading,
+		isError,
+		isFetching,
+		isPreviousData,
+	} = useQuery(['currencies', page], () => fetchCurrencies(page, perPage), {staleTime: 5000, keepPreviousData: true});
+
 	// check if data is loading
-	if (isLoading) {
+	if (isLoading || isFetching) {
 		return (
 			<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto pt-10 '>
 				<Skeleton />
@@ -21,53 +35,29 @@ const Currencies = () => {
 	}
 
 	return (
-		<section className='p-10'>
-			{data?.length > 0 && (
-				<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto  '>
-					<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
-						<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
-							<div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
-								<table className='min-w-full divide-y divide-gray-200'>
-									<thead className='bg-black text-white'>
-										<tr>
-											<th scope='col' className='px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												#
-											</th>
-											<th scope='col' className='px-12 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												COINS
-											</th>
-											<th scope='col' className='px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												PRICE
-											</th>
-											<th scope='col' className='px-10 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												24H
-											</th>
-											<th scope='col' className='px-10 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												7D
-											</th>
-											<th scope='col' className='px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												MARKET CAP
-											</th>
-											<th scope='col' className='px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												TOTAL VOLUME
-											</th>
-											<th scope='col' className='px-10 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider'>
-												CIRCULATING SUPPLY
-											</th>
-										</tr>
-									</thead>
-
-									{data &&
-										data?.map((currency: ICurrencyInfo, index: number) => {
-											return <CurrencyList key={index} currency={currency} totalCurrency={index} />;
-										})}
-								</table>
+		<>
+			<section className='p-10'>
+				{currencies && !isFetching && (
+					<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto  '>
+						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
+							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
+								<div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
+									<table className='min-w-full divide-y divide-gray-200'>
+										<THeadCurrencies />
+										{currencies &&
+											currencies?.map((currency: ICurrencyInfo, index: number) => {
+												return <TBodyCurrencies key={index} currency={currency} totalCurrency={index} />;
+											})}
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			)}
-		</section>
+				)}
+			</section>
+
+			{totalCurrency && <Pagination total={totalCurrency} perPage={perPage} currentPage={page} setCurrentPage={setPage} isPreviousData={isPreviousData} />}
+		</>
 	);
 };
 

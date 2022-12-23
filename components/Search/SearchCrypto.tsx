@@ -1,72 +1,90 @@
 import {Transition} from '@headlessui/react';
 import {Fragment, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
+import {useMutation, useQuery} from 'react-query';
+import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
+import {fetchCurrencies} from '../../services/axios';
 
-const SearchCrypto = () => {
-	const [query, setQuery] = useState(null);
+const SearchCrypto = ({setNewCurrencies}: any) => {
+	const [query, setQuery] = useState<any>(null);
+	const [page, setPage] = useState<number>(1);
 	const [message, setMessage] = useState<string | undefined>('');
 	const [show, setShow] = useState(false);
-	// const [_, dispatch] = useStateValue();
-	const {register, getValues, handleSubmit, clearErrors, reset} = useForm({
-		mode: 'onSubmit',
-	});
+	const {register, getValues, handleSubmit, clearErrors} = useForm({mode: 'onChange'});
 
 	const onValidSubmit = (e: any) => {
-		const {restaurantName} = getValues();
-		setQuery(restaurantName);
+		const {crypto} = getValues();
+		setQuery(crypto);
 	};
-	const clearSearchErrors = () => clearErrors('restaurantName');
+	const clearSearchErrors = () => clearErrors('crypto');
 
-	const onCompleted = (data: any) => {
-		const {ok, message, restaurants} = data?.searchRestaurants;
-		if (!ok) {
-			setMessage(message);
-			setShow(true);
-			setTimeout(() => {
-				setShow(false);
-			}, 2000);
-		}
-		if (ok && restaurants) {
-			// dispatch({
-			// 	type: 'SET_RESTAURANTS',
-			// 	payload: {restaurants},
-			// });
-			setQuery(null);
-			reset({restaurantName: ''});
-		}
-	};
+	const {data: currencies} = useQuery(['currencies'], () => fetchCurrencies(), {
+		enabled: query === null,
+	});
+	const {data: currency} = useMutation(() => fetchCurrencies(page, 10), {
+		onSuccess: (data) => {
+			console.log(data);
+			setNewCurrencies(data);
+		},
+	});
+	console.log(currency);
+	useQuery(
+		['filteredCurrencies', query],
+		() => {
+			if (query) {
+				const filteredCurrencies = currencies?.filter((currency: ICurrencyInfo) => {
+					return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
+				});
+				if (filteredCurrencies.length > 0) {
+					setShow(false);
+					setNewCurrencies(filteredCurrencies);
+				}
+				if (filteredCurrencies.length > 10) {
+					setShow(false);
+					setNewCurrencies(filteredCurrencies.slice(0, 10));
+				}
+				if (filteredCurrencies.length === 0) {
+					setMessage('No result found');
+					setShow(true);
+				} else if (query === '') {
+					setShow(false);
+				}
+			} else if (query === null || query === '') {
+				// reload the page
+				window.location.reload();
+			}
+		},
+		{enabled: query !== null},
+	);
 
-	// const [handler, {loading}] = useLazyQuery<SearchRestaurantsQuery, SearchRestaurantsQueryVariables>(SEARCH_RESTAURANT, {onCompleted});
-	useEffect(() => {
-		if (query) {
-			// handler({
-			// 	variables: {
-			// 		data: {query},
-			// 	},
-			// });
-		} else if (query === '') {
-			window.location.reload();
-		}
-	}, [query]);
-
-	useEffect(() => {
-		setTimeout(() => {
-			setShow(false);
-		}, 2000);
-		return () => {
-			setShow(true);
-		};
-	}, [message]);
+	// useEffect(() => {
+	// 	if (query) {
+	// 		const filteredCurrencies = currencies?.filter((currency: any) => {
+	// 			return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
+	// 		});
+	// 		if (filteredCurrencies.length > 0) {
+	// 			setNewCurrencies(filteredCurrencies);
+	// 			setShow(false);
+	// 		}
+	// 		if (filteredCurrencies.length === 0) {
+	// 			setMessage('No result found');
+	// 			setShow(true);
+	// 		}
+	// 	} else if (query === '') {
+	// 		setNewCurrencies(currencies);
+	// 		setShow(false);
+	// 	}
+	// }, [query]);
 
 	return (
 		<div>
-			<form onSubmit={handleSubmit(onValidSubmit)} className=' w-full max-w-screen-md md:max-w-screen-xl flex items-center justify-center font-bold text-lg  text-center '>
-				<div className='flex   items-center border-2 rounded-full  border-gray-100'>
+			<form onChange={handleSubmit(onValidSubmit)} className=' w-full  max-w-screen-md md:max-w-screen-xl flex items-center justify-center font-bold text-lg  text-center '>
+				<div className='flex   items-center border-[1px] rounded-full  border-gray-200 dark:border-gray-600'>
 					<input
 						id='searchInput'
-						className='flex-1 input w-full placeholder:text-sm md:placeholder:text-md'
+						className='flex-1 dark:bg-ocean input w-full placeholder:text-sm md:placeholder:text-md'
 						type='search'
-						{...register('restaurantName', {})}
+						{...register('crypto', {})}
 						placeholder='ex:BTC,btc,bitcoin'
 						onKeyDown={clearSearchErrors}
 					/>
@@ -91,13 +109,13 @@ const SearchCrypto = () => {
 					<p className=' flex justify-center items-center rounded-lg text-white bg-red-500 px-5 absolute'>{message}</p>
 				</Transition>
 			)}
-			{false && (
-				<div className=' flex justify-center items-center '>
-					<div className='h-12  w-12 absolute border-2 border-green-400 animate-ping rounded-full'></div>
-					<div className='h-14  w-14 absolute border-2 border-green-400 animate-ping rounded-full'></div>
-					<div className='h-16  w-16 absolute border-2 border-green-400 animate-wiggle rounded-full'></div>
+			{/* {isLoading && (
+				<div className=' flex justify-center items-center pt-4'>
+					<div className='h-2  w-2 absolute border-2 border-green-400 animate-ping rounded-full'></div>
+					<div className='h-3  w-3 absolute border-2 border-green-400 animate-ping rounded-full'></div>
+					<div className='h-4  w-4 absolute border-2 border-green-400 animate-wiggle rounded-full'></div>
 				</div>
-			)}
+			)} */}
 		</div>
 	);
 };

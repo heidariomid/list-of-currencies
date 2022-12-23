@@ -1,4 +1,29 @@
 @tailwind base;
+@layer base {
+	* {
+		box-sizing: border-box;
+	}
+	html,
+	body {
+		margin: 0;
+		padding: 0;
+	}
+	body {
+		font-family: 'Roboto', sans-serif;
+	}
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+	ul {
+		list-style: none;
+	}
+	img {
+		max-width: 100%;
+		display: block;
+	}
+}
+
 @tailwind components;
 
 @layer utilities {
@@ -10,12 +35,15 @@
 }
 
 .input {
-	@apply px-2 rounded-full text-lg font-light focus:outline-none hover:border-gray-400 hover:transition-colors;
+	@apply px-2 rounded-full text-lg  font-light focus:outline-none hover:border-gray-400 hover:transition-colors;
 }
 .span {
 	@apply p-1 m-1 text-sm;
 }
 .btn {
 	@apply text-white  text-center  p-2 bg-black;
+}
+.text-gradient {
+	@apply bg-gradient-to-br from-indigo-600 via-violet-500 to-fuchsia-500  text-transparent bg-clip-text;
 }
 @tailwind utilities;

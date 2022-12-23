@@ -1,17 +1,20 @@
 import {useState} from 'react';
 import {QueryClient, useQuery} from 'react-query';
-import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
+import {CurrencyListProps, ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
 import {fetchCurrencies, fetchCurrenciesLength} from '../../services/axios';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
 import TBodyCurrencies from './TBodyCurrencies';
 import THeadCurrencies from './THeadCurrencies';
-const Currencies = () => {
+const Currencies = ({newCurrencies}: CurrencyListProps) => {
 	const queryClient = new QueryClient();
 	const [page, setPage] = useState<number>(1);
+
 	const perPage = 10;
 	// useQuery to fetch data length
 	const {data: totalCurrency} = useQuery(['totalCurrency'], fetchCurrenciesLength);
+	// const {data: filteredCurrencies, isLoading: loading} = useQuery<any>(['filteredCurrencies']);
+
 	// useQuery to fetch data
 	const {
 		data: currencies,
@@ -36,16 +39,23 @@ const Currencies = () => {
 
 	return (
 		<>
-			<section className='p-10'>
+			<section className='p-10 h-screen'>
 				{currencies && !isFetching && (
 					<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto  '>
 						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
 							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
-								<div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
-									<table className='min-w-full divide-y divide-gray-200'>
+								<div className='shadow overflow-hidden  border-[1px] border-gray-200 dark:border-zinc-600 sm:rounded-lg'>
+									<table className='min-w-full divide-y-[1px] divide-gray-200 dark:divide-zinc-700 '>
 										<THeadCurrencies />
 										{currencies &&
+											newCurrencies &&
+											newCurrencies?.length < 1 &&
 											currencies?.map((currency: ICurrencyInfo, index: number) => {
+												return <TBodyCurrencies key={index} currency={currency} totalCurrency={index} />;
+											})}
+										{newCurrencies &&
+											newCurrencies?.length > 0 &&
+											newCurrencies?.map((currency: ICurrencyInfo, index: number) => {
 												return <TBodyCurrencies key={index} currency={currency} totalCurrency={index} />;
 											})}
 									</table>
@@ -56,7 +66,17 @@ const Currencies = () => {
 				)}
 			</section>
 
-			{totalCurrency && <Pagination total={totalCurrency} perPage={perPage} currentPage={page} setCurrentPage={setPage} isPreviousData={isPreviousData} />}
+			<section className='-mt-[250px]'>
+				{totalCurrency && (
+					<Pagination
+						total={newCurrencies && newCurrencies.length > 0 ? newCurrencies.length : totalCurrency}
+						perPage={perPage}
+						currentPage={page}
+						setCurrentPage={setPage}
+						isPreviousData={isPreviousData}
+					/>
+				)}
+			</section>
 		</>
 	);
 };

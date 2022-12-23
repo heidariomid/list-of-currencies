@@ -14,11 +14,11 @@ const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 		return bgColor;
 	};
 	return (
-		<tbody className='bg-white divide-y divide-gray-200 dark:bg-zinc-900'>
+		<tbody className='bg-white divide-y divide-gray-200 dark:bg-ocean dark:divide-gray-700 '>
 			{currency?.id && (
 				<tr key={currency.id}>
 					{/*  show number of currencies from 1 to totalCurrency length */}
-					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-white'>{totalCurrency + 1}</td>
+					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400'>{totalCurrency + 1}</td>
 
 					<td className='px-6 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>
@@ -27,7 +27,7 @@ const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 							</div>
 							<div className='ml-4'>
 								<div className='text-sm font-medium text-gray-900 dark:text-white'>{currency.name}</div>
-								<div className='text-sm font-medium text-gray-500 dark:text-white uppercase'>{currency.symbol}</div>
+								<div className='text-sm font-medium text-gray-500 dark:text-zinc-400 uppercase'>{currency.symbol}</div>
 							</div>
 						</div>
 					</td>
@@ -69,14 +69,13 @@ const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 							</span>
 						</div>
 					</td>
-
 					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
 						<CurrencyFormat value={currency?.market_cap?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
 						<CurrencyFormat value={currency?.total_volume?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 					</td>
-					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white text-right'>
+					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white text-right '>
 						<CurrencyFormat value={currency?.circulating_supply?.toFixed(0)} displayType={'text'} thousandSeparator={true} />
 						<span className='text-gray-400 ml-2 uppercase'>{currency.symbol}</span>
 					</td>

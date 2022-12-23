@@ -1,6 +1,7 @@
 export type CurrencyListProps = {
-	currency: ICurrencyInfo;
-	totalCurrency: number;
+	currency?: ICurrencyInfo;
+	newCurrencies?: ICurrencyInfo[] | undefined;
+	totalCurrency?: number;
 };
 export type ICurrencyInfo = {
 	id: string;

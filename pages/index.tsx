@@ -4,10 +4,13 @@ import axios from 'axios';
 import Currencies from '../components/Lists/Currencies';
 import Pagination from '../components/Pagination/Pagination';
 import Header from '../components/Header/Header';
+import {fetchCurrencies} from '../services/axios';
+import {useState} from 'react';
 
 const Home = () => {
+	const [newCurrencies, setNewCurrencies] = useState([]);
 	return (
-		<>
+		<div className='dark:bg-ocean h-screen w-full '>
 			<Head>
 				<title>Cryptocurrency</title>
 				<meta name='description' content='showing list of digital currencies' />
@@ -15,20 +18,17 @@ const Home = () => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main>
-				<Header />
-				<Currencies />
+				<Header setNewCurrencies={setNewCurrencies} />
+				<Currencies newCurrencies={newCurrencies} />
 			</main>
-		</>
+		</div>
 	);
 };
 
 // getStaticProps to fetch data on server side
 export async function getStaticProps() {
 	const queryClient = new QueryClient();
-	await queryClient.prefetchQuery('currencies', async () => {
-		const {data} = await axios.get('https://api.coingecko.com/api/v3/simple/supported_vs_currencies');
-		return data;
-	});
+	await queryClient.prefetchQuery(['currencies'], () => fetchCurrencies(1, 10));
 	return {
 		props: {
 			dehydratedState: dehydrate(queryClient),

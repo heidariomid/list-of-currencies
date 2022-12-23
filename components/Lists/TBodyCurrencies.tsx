@@ -18,7 +18,7 @@ const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 			{currency?.id && (
 				<tr key={currency.id}>
 					{/*  show number of currencies from 1 to totalCurrency length */}
-					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400'>{totalCurrency + 1}</td>
+					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400'>{totalCurrency && totalCurrency + 1}</td>
 
 					<td className='px-6 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>

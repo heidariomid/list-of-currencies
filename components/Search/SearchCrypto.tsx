@@ -21,13 +21,7 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 	const {data: currencies} = useQuery(['currencies'], () => fetchCurrencies(), {
 		enabled: query === null,
 	});
-	const {data: currency} = useMutation(() => fetchCurrencies(page, 10), {
-		onSuccess: (data) => {
-			console.log(data);
-			setNewCurrencies(data);
-		},
-	});
-	console.log(currency);
+
 	useQuery(
 		['filteredCurrencies', query],
 		() => {

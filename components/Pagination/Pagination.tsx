@@ -63,7 +63,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 		pages.push(i);
 	}
 	return (
-		<div className='text-center justify-center'>
+		<div className='text-center justify-center '>
 			<div className='flex flex-row justify-center items-center mb-20 '>
 				{currentPage !== 1 && (
 					<button

@@ -1,7 +1,7 @@
 import {CurrencyListProps} from '../../interfaces/ICurrencyInfo';
 import CurrencyFormat from 'react-currency-format';
 
-const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
+const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 	const orderStatusStyle = (change: number) => {
 		let bgColor;
 		if (change > 0) {
@@ -17,9 +17,6 @@ const TBodyCurrencies = ({currency, totalCurrency}: CurrencyListProps) => {
 		<tbody className='bg-white divide-y divide-gray-200 dark:bg-ocean dark:divide-gray-700 '>
 			{currency?.id && (
 				<tr key={currency.id}>
-					{/*  show number of currencies from 1 to totalCurrency length */}
-					<td className='pl-6  whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400'>{totalCurrency && totalCurrency + 1}</td>
-
 					<td className='px-6 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>
 							<div className='flex-shrink-0 h-10 w-10'>

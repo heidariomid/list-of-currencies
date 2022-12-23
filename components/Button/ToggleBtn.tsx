@@ -10,7 +10,6 @@ function classNames(...classes: string[]) {
 const ToggleBtn = () => {
 	const [enabled, setEnabled] = useState(true);
 	const {currentTheme, setTheme} = useCurrentTheme();
-
 	const themeHandler = () => {
 		setEnabled(!enabled);
 		setTheme(currentTheme === 'dark' ? 'light' : 'dark');

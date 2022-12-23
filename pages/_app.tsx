@@ -7,11 +7,11 @@ export default function App({Component, pageProps}: AppProps) {
 	const queryClient = new QueryClient();
 	return (
 		<QueryClientProvider client={queryClient}>
-			<ThemeProvider enableSystem={true} attribute='class'>
-				<Hydrate state={pageProps.dehydratedState}>
+			<Hydrate state={pageProps.dehydratedState}>
+				<ThemeProvider attribute='class'>
 					<Component {...pageProps} />
-				</Hydrate>
-			</ThemeProvider>
+				</ThemeProvider>
+			</Hydrate>
 		</QueryClientProvider>
 	);
 }

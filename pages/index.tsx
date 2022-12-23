@@ -1,16 +1,14 @@
 import Head from 'next/head';
 import {dehydrate, QueryClient, useQuery} from 'react-query';
-import axios from 'axios';
 import Currencies from '../components/Lists/Currencies';
-import Pagination from '../components/Pagination/Pagination';
 import Header from '../components/Header/Header';
-import {fetchCurrencies} from '../services/axios';
+import {fetchCurrencies} from '../FetcherApi/axios';
 import {useState} from 'react';
 
 const Home = () => {
 	const [newCurrencies, setNewCurrencies] = useState([]);
 	return (
-		<div className='dark:bg-ocean h-screen w-full '>
+		<div className='dark:bg-ocean h-full md:h-screen w-full '>
 			<Head>
 				<title>Cryptocurrency</title>
 				<meta name='description' content='showing list of digital currencies' />

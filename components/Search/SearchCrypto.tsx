@@ -3,7 +3,7 @@ import {Fragment, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {useMutation, useQuery} from 'react-query';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchCurrencies} from '../../services/axios';
+import {fetchCurrencies} from '../../FetcherApi/axios';
 
 const SearchCrypto = ({setNewCurrencies}: any) => {
 	const [query, setQuery] = useState<any>(null);

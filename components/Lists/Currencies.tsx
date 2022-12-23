@@ -1,19 +1,16 @@
 import {useState} from 'react';
 import {QueryClient, useQuery} from 'react-query';
 import {CurrencyListProps, ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchCurrencies, fetchCurrenciesLength} from '../../services/axios';
+import {fetchCurrencies, fetchCurrenciesLength} from '../../FetcherApi/axios';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
 import TBodyCurrencies from './TBodyCurrencies';
 import THeadCurrencies from './THeadCurrencies';
 const Currencies = ({newCurrencies}: CurrencyListProps) => {
-	const queryClient = new QueryClient();
 	const [page, setPage] = useState<number>(1);
-
 	const perPage = 10;
 	// useQuery to fetch data length
 	const {data: totalCurrency} = useQuery(['totalCurrency'], fetchCurrenciesLength);
-	// const {data: filteredCurrencies, isLoading: loading} = useQuery<any>(['filteredCurrencies']);
 
 	// useQuery to fetch data
 	const {
@@ -39,9 +36,9 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 
 	return (
 		<>
-			<section className='p-10 h-screen'>
+			<section className='p-10 '>
 				{currencies && !isFetching && (
-					<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto  '>
+					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto  '>
 						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
 							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
 								<div className='shadow overflow-hidden  border-[1px] border-gray-200 dark:border-zinc-600 sm:rounded-lg'>
@@ -51,12 +48,12 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 											newCurrencies &&
 											newCurrencies?.length < 1 &&
 											currencies?.map((currency: ICurrencyInfo, index: number) => {
-												return <TBodyCurrencies key={index} currency={currency} totalCurrency={index} />;
+												return <TBodyCurrencies key={index} currency={currency} />;
 											})}
 										{newCurrencies &&
 											newCurrencies?.length > 0 &&
 											newCurrencies?.map((currency: ICurrencyInfo, index: number) => {
-												return <TBodyCurrencies key={index} currency={currency} totalCurrency={index} />;
+												return <TBodyCurrencies key={index} currency={currency} />;
 											})}
 									</table>
 								</div>
@@ -66,7 +63,7 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 				)}
 			</section>
 
-			<section className='-mt-[250px]'>
+			<section className='mt-10 h-24 '>
 				{totalCurrency && (
 					<Pagination
 						total={newCurrencies && newCurrencies.length > 0 ? newCurrencies.length : totalCurrency}

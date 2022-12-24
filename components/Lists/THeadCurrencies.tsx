@@ -4,6 +4,9 @@ const THeadCurrencies = () => {
 	return (
 		<thead className='bg-black text-white dark:text-zinc-400 dark:bg-ocean'>
 			<tr>
+				<th scope='col' className='px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider'>
+					RANK
+				</th>
 				<th scope='col' className='px-12 py-3 text-left text-xs font-medium  uppercase tracking-wider'>
 					COINS
 				</th>

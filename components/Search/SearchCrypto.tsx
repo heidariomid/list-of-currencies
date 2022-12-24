@@ -21,7 +21,6 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 	const {data: currencies} = useQuery(['currencies'], () => fetchCurrencies(), {
 		enabled: query === null,
 	});
-
 	useQuery(
 		['filteredCurrencies', query],
 		() => {
@@ -33,17 +32,12 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 					setShow(false);
 					setNewCurrencies(filteredCurrencies);
 				}
-				if (filteredCurrencies.length > 10) {
-					setShow(false);
-					setNewCurrencies(filteredCurrencies.slice(0, 10));
-				}
 				if (filteredCurrencies.length === 0) {
 					setMessage('No result found');
 					setShow(true);
-				} else if (query === '') {
-					setShow(false);
 				}
-			} else if (query === null || query === '') {
+			} else if (query === '') {
+				setShow(false);
 				// reload the page
 				window.location.reload();
 			}

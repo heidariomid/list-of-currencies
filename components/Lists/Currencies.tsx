@@ -10,7 +10,7 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 	const [page, setPage] = useState<number>(1);
 	const perPage = 10;
 	// useQuery to fetch data length
-	const {data: totalCurrency} = useQuery(['totalCurrency'], fetchCurrenciesLength);
+	const {data: totalCurrency, isLoading: loading} = useQuery(['totalCurrency'], fetchCurrenciesLength);
 
 	// useQuery to fetch data
 	const {
@@ -37,7 +37,7 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 	return (
 		<>
 			<section className='p-10 '>
-				{currencies && !isFetching && (
+				{currencies && (
 					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto  '>
 						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
 							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
@@ -64,7 +64,7 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 			</section>
 
 			<section className='mt-10 h-24 '>
-				{totalCurrency && (
+				{!loading && (
 					<Pagination
 						total={newCurrencies && newCurrencies.length > 0 ? newCurrencies.length : totalCurrency}
 						perPage={perPage}

@@ -17,7 +17,8 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 		<tbody className='bg-white divide-y divide-gray-200 dark:bg-ocean dark:divide-gray-700 '>
 			{currency?.id && (
 				<tr key={currency.id}>
-					<td className='px-6 py-4 whitespace-nowrap'>
+					<td className='pl-6  text-sm text-gray-500 dark:text-zinc-400'>{currency.market_cap_rank}</td>
+					<td className='px-2 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>
 							<div className='flex-shrink-0 h-10 w-10'>
 								<img className='h-10 w-10 rounded-full' src={currency.image} alt='' />
@@ -33,7 +34,6 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 							<CurrencyFormat value={currency?.current_price?.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
 						</div>
 					</td>
-
 					<td className='px-6 py-4 whitespace-nowrap '>
 						<div className='flex'>
 							{currency.price_change_24h < 0 ? (

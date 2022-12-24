@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {QueryClient, useQuery, useQueryClient} from 'react-query';
+import {useQuery, useQueryClient} from 'react-query';
 import {CurrencyListProps, ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
 import {fetchCurrencies, fetchCurrenciesLength} from '../../FetcherApi/axios';
 import Skeleton from '../Loading/Skeleton';
@@ -11,27 +11,16 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 	const [page, setPage] = useState<number>(1);
 	const perPage = 10;
 	// useQuery to fetch data length
-	const {data: totalCurrency, isLoading: loading} = useQuery(['totalCurrency'], fetchCurrenciesLength);
-	// prefetch next page
+	const {data: totalCurrency, isLoading: loading} = useQuery(['totalCurrency'], fetchCurrenciesLength, {staleTime: 5000});
+	// prefetch next page data
 	useEffect(() => {
 		const nextPage = page + 1;
-		if (nextPage > Math.ceil(totalCurrency / perPage)) return;
-		const prePage = page - 1;
-		if (prePage < 1) return;
 		queryClient.prefetchQuery(['currencies', nextPage], () => fetchCurrencies(nextPage, perPage));
-		queryClient.prefetchQuery(['currencies', prePage], () => fetchCurrencies(prePage, perPage));
 	}, [page, queryClient]);
 	// useQuery to fetch data
-	const {
-		data: currencies,
-		isLoading,
-		isError,
-		isFetching,
-		isPreviousData,
-	} = useQuery(['currencies', page], () => fetchCurrencies(page, perPage), {staleTime: 5000, keepPreviousData: true});
-
+	const {data: currencies, isLoading, isError, isPreviousData} = useQuery(['currencies', page], () => fetchCurrencies(page, perPage), {staleTime: 5000, keepPreviousData: true});
 	// check if data is loading
-	if (isLoading || isFetching) {
+	if (isLoading) {
 		return (
 			<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto pt-10 '>
 				<Skeleton />

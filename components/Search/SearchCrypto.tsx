@@ -20,6 +20,11 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 	const {data: currencies} = useQuery(['currencies'], () => fetchCurrencies(), {
 		enabled: query === null,
 	});
+	const {mutate} = useMutation(() => fetchCurrencies(page, 10), {
+		onSuccess: (data) => {
+			setNewCurrencies(data);
+		},
+	});
 	useQuery(
 		['filteredCurrencies', page, query],
 		() => {
@@ -43,25 +48,6 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 		},
 		{enabled: query !== null},
 	);
-
-	// useEffect(() => {
-	// 	if (query) {
-	// 		const filteredCurrencies = currencies?.filter((currency: any) => {
-	// 			return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
-	// 		});
-	// 		if (filteredCurrencies.length > 0) {
-	// 			setNewCurrencies(filteredCurrencies);
-	// 			setShow(false);
-	// 		}
-	// 		if (filteredCurrencies.length === 0) {
-	// 			setMessage('No result found');
-	// 			setShow(true);
-	// 		}
-	// 	} else if (query === '') {
-	// 		setNewCurrencies(currencies);
-	// 		setShow(false);
-	// 	}
-	// }, [query]);
 
 	return (
 		<div>

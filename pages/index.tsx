@@ -24,14 +24,14 @@ const Home = () => {
 };
 
 // getStaticProps to fetch data on server side
-export async function getStaticProps() {
-	const queryClient = new QueryClient();
-	await queryClient.prefetchQuery(['currencies'], () => fetchCurrencies(1, 10));
-	return {
-		props: {
-			dehydratedState: dehydrate(queryClient),
-		},
-	};
-}
+// export async function getStaticProps() {
+// 	const queryClient = new QueryClient();
+// 	await queryClient.prefetchQuery(['currencies'], () => fetchCurrencies(1, 10));
+// 	return {
+// 		props: {
+// 			dehydratedState: dehydrate(queryClient),
+// 		},
+// 	};
+// }
 
 export default Home;

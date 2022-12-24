@@ -87,7 +87,9 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== totalPages && (
 					<button
 						disabled={currentPage === totalPages || isPreviousData}
-						onClick={() => setCurrentPage(currentPage + 1)}
+						onClick={() => {
+							if (!isPreviousData) setCurrentPage(currentPage + 1);
+						}}
 						className=' relative inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAngleRight} />

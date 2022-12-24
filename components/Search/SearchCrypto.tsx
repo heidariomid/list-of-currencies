@@ -11,7 +11,6 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 	const [message, setMessage] = useState<string | undefined>('');
 	const [show, setShow] = useState(false);
 	const {register, getValues, handleSubmit, clearErrors} = useForm({mode: 'onChange'});
-
 	const onValidSubmit = (e: any) => {
 		const {crypto} = getValues();
 		setQuery(crypto);
@@ -22,7 +21,7 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 		enabled: query === null,
 	});
 	useQuery(
-		['filteredCurrencies', query],
+		['filteredCurrencies', page, query],
 		() => {
 			if (query) {
 				const filteredCurrencies = currencies?.filter((currency: ICurrencyInfo) => {

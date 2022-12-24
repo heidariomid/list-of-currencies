@@ -4,10 +4,6 @@ const config: AxiosRequestConfig = {
 };
 export const axiosInstance = axios.create({
 	...config,
-	timeout: 10000,
-	headers: {
-		'Content-Type': 'application/json',
-	},
 });
 export const fetchCurrenciesLength = async () => {
 	const {data} = await axiosInstance.get('/simple/supported_vs_currencies');

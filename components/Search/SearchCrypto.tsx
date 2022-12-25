@@ -1,13 +1,12 @@
 import {Transition} from '@headlessui/react';
-import {Fragment, useEffect, useState} from 'react';
+import {Fragment, useCallback, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {useMutation, useQuery} from 'react-query';
+import {useQuery} from '@tanstack/react-query';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
 import {fetchCurrencies} from '../../FetcherApi/axios';
 
 const SearchCrypto = ({setNewCurrencies}: any) => {
 	const [query, setQuery] = useState<any>(null);
-	const [page, setPage] = useState<number>(1);
 	const [message, setMessage] = useState<string | undefined>('');
 	const [show, setShow] = useState(false);
 	const {register, getValues, handleSubmit, clearErrors} = useForm({mode: 'onChange'});
@@ -16,38 +15,30 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 		setQuery(crypto);
 	};
 	const clearSearchErrors = () => clearErrors('crypto');
-
-	const {data: currencies} = useQuery(['currencies'], () => fetchCurrencies(), {
-		enabled: query === null,
-	});
-	const {mutate} = useMutation(() => fetchCurrencies(page, 10), {
-		onSuccess: (data) => {
-			setNewCurrencies(data);
-		},
-	});
-	useQuery(
-		['filteredCurrencies', page, query],
-		() => {
-			if (query) {
-				const filteredCurrencies = currencies?.filter((currency: ICurrencyInfo) => {
-					return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
-				});
-				if (filteredCurrencies.length > 0) {
-					setShow(false);
-					setNewCurrencies(filteredCurrencies);
-				}
-				if (filteredCurrencies.length === 0) {
-					setMessage('No result found');
-					setShow(true);
-				}
-			} else if (query === '') {
+	const handleSearch = useCallback(
+		(data: ICurrencyInfo[]) => {
+			const filteredCurrencies = data?.filter((currency: ICurrencyInfo) => {
+				return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
+			});
+			if (filteredCurrencies.length > 0) {
 				setShow(false);
-				// reload the page
+				setNewCurrencies(filteredCurrencies);
+			}
+			if (filteredCurrencies.length === 0) {
+				setMessage('No result found');
+				setShow(true);
+			} else if (query === '' || query === null) {
+				setShow(false);
 				window.location.reload();
 			}
 		},
-		{enabled: query !== null},
+		[query, setNewCurrencies],
 	);
+
+	useQuery(['currencies'], () => fetchCurrencies(), {
+		enabled: query === null,
+		select: !query ? undefined : handleSearch,
+	});
 
 	return (
 		<div>

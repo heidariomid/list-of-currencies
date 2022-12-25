@@ -17,3 +17,11 @@ export const fetchCurrencies = async (page?: number | 1, perPage?: number | 10) 
 		console.error(error);
 	}
 };
+export const searchCurrencies = async (query: string) => {
+	try {
+		const {data} = await axiosInstance.get(`/search?query=${query}`);
+		return data;
+	} catch (error) {
+		console.error(error);
+	}
+};

@@ -1,54 +1,38 @@
 import {Transition} from '@headlessui/react';
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {Fragment, useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {useQuery} from '@tanstack/react-query';
-import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchCurrencies} from '../../FetcherApi/axios';
+import {actions} from '../../store/actions/actions';
+import {useStateValue} from '../../store/context/ContextManager';
 
-const SearchCrypto = ({setNewCurrencies}: any) => {
-	const [query, setQuery] = useState<any>(null);
-	const [message, setMessage] = useState<string | undefined>('');
-	const [show, setShow] = useState(false);
+const SearchCrypto = () => {
+	const [state, dispatch] = useStateValue();
 	const {register, getValues, handleSubmit, clearErrors} = useForm({mode: 'onChange'});
-	const onValidSubmit = (e: any) => {
-		const {crypto} = getValues();
-		setQuery(crypto);
-	};
-	const clearSearchErrors = () => clearErrors('crypto');
-	const handleSearch = useCallback(
-		(data: ICurrencyInfo[]) => {
-			const filteredCurrencies = data?.filter((currency: ICurrencyInfo) => {
-				return currency.name.toLowerCase().includes(query?.toLowerCase()) || currency.symbol.toLowerCase().includes(query?.toLowerCase());
+	const onValidSubmit = () => {
+		const {query} = getValues();
+		if (query) {
+			dispatch({
+				type: actions.SEARCH_CURRENCY,
+				payload: {query},
 			});
-			if (filteredCurrencies.length > 0) {
-				setShow(false);
-				setNewCurrencies(filteredCurrencies);
-			}
-			if (filteredCurrencies.length === 0) {
-				setMessage('No result found');
-				setShow(true);
-			} else if (query === '' || query === null) {
-				setShow(false);
-				window.location.reload();
-			}
-		},
-		[query, setNewCurrencies],
-	);
-
-	useQuery(['currencies'], () => fetchCurrencies(), {
-		enabled: query === null,
-		select: !query ? undefined : handleSearch,
-	});
+		}
+		if (query === '') {
+			dispatch({
+				type: actions.SEARCH_CURRENCY,
+				payload: {query: 'empty'},
+			});
+		}
+	};
+	const clearSearchErrors = () => clearErrors('query');
 
 	return (
 		<div>
 			<form onChange={handleSubmit(onValidSubmit)} className=' w-full  max-w-screen-md md:max-w-screen-xl flex items-center justify-center font-bold text-lg  text-center '>
-				<div className='flex   items-center border-[1px] rounded-full  border-gray-200 dark:border-gray-600'>
+				<div className='flex items-center border-[1px] rounded-full  border-gray-200 dark:border-gray-600'>
 					<input
 						id='searchInput'
 						className='flex-1 dark:bg-ocean input w-full placeholder:text-sm md:placeholder:text-md'
 						type='search'
-						{...register('crypto', {})}
+						{...register('query', {})}
 						placeholder='ex:BTC,btc,bitcoin'
 						onKeyDown={clearSearchErrors}
 					/>
@@ -59,9 +43,9 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 					</button>
 				</div>
 			</form>
-			{message && (
+			{state?.currency?.showMessage && (
 				<Transition
-					show={show}
+					show={state?.currency?.showMessage}
 					as={Fragment}
 					enter='transform ease-out duration-300 transition'
 					enterFrom='translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2'
@@ -70,16 +54,9 @@ const SearchCrypto = ({setNewCurrencies}: any) => {
 					leaveFrom='opacity-100'
 					leaveTo='opacity-0'
 				>
-					<p className=' flex justify-center items-center rounded-lg text-white bg-red-500 px-5 absolute'>{message}</p>
+					<p className=' flex justify-center items-center rounded-lg text-white bg-red-500 px-5 absolute'>{state?.currency?.message}</p>
 				</Transition>
 			)}
-			{/* {isLoading && (
-				<div className=' flex justify-center items-center pt-4'>
-					<div className='h-2  w-2 absolute border-2 border-green-400 animate-ping rounded-full'></div>
-					<div className='h-3  w-3 absolute border-2 border-green-400 animate-ping rounded-full'></div>
-					<div className='h-4  w-4 absolute border-2 border-green-400 animate-wiggle rounded-full'></div>
-				</div>
-			)} */}
 		</div>
 	);
 };

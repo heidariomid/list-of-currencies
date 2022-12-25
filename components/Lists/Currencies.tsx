@@ -1,26 +1,94 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {CurrencyListProps, ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchCurrencies, fetchCurrenciesLength} from '../../FetcherApi/axios';
+import {allMockedCurrencies, fetchAllCurrencies, fetchCurrencies, mockedCurrencies} from '../../FetcherApi/axios';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
 import TBodyCurrencies from './TBodyCurrencies';
 import THeadCurrencies from './THeadCurrencies';
-const Currencies = ({newCurrencies}: CurrencyListProps) => {
+import {useStateValue} from '../../store/context/ContextManager';
+import {Paginator} from '../../services/Paginator';
+const Currencies = () => {
 	const queryClient = useQueryClient();
 	const [page, setPage] = useState<number>(1);
-	const perPage = 10;
+	const [perPage, setPerPage] = useState<number>(10);
+	const [totalPageItems, setTotalPageItems] = useState<number>(100);
+	const [message, setMessage] = useState<string | undefined>('');
+	const [state] = useStateValue();
+
+	// mocked all currencies
+	// const {data: allCurrencies} = useQuery(['mockedAllCurrencies'], allMockedCurrencies);
+
+	// useQuery to fetch all currencies
+	const {data: allCurrencies, isLoading: isAllCurrenciesLoading} = useQuery(['allCurrencies'], fetchAllCurrencies, {
+		staleTime: 5000,
+		enabled: state?.currency?.query !== null,
+	});
 	// useQuery to fetch data length
-	const {data: totalCurrency, isLoading: loading} = useQuery(['totalCurrency'], fetchCurrenciesLength, {staleTime: 5000});
+	// const {data: allCurrencies, isLoading: isFetchAllCurrenciesLoading} = useQuery(['allCurrencies'], fetchAllCurrencies, {
+	// 	staleTime: 5000,
+	// 	enabled: state?.currency?.query !== null,
+	// });
 	// prefetch next page data
 	useEffect(() => {
 		const nextPage = page + 1;
 		queryClient.prefetchQuery(['currencies', nextPage], () => fetchCurrencies(nextPage, perPage));
 	}, [page, queryClient]);
+
+	// handle search
+	const handleSearch = useCallback(
+		(data: any) => {
+			// isFetchAllCurrenciesLoading && <Skeleton />;
+			if (allCurrencies) {
+				const filteredCurrencies = allCurrencies?.filter(
+					(currency: any) =>
+						currency.name.toLowerCase().includes(state?.currency?.query?.toLowerCase()) ||
+						currency.symbol.toLowerCase().includes(state?.currency?.query?.toLowerCase()),
+				);
+				if (state?.currency?.query === 'empty') {
+					if (totalPageItems !== allCurrencies.length) {
+						setTotalPageItems(allCurrencies.length);
+						if (page !== 1) {
+							setPage(1);
+						}
+					}
+					if (message !== '') {
+						setMessage('');
+					}
+
+					return data;
+				}
+				if (filteredCurrencies.length > 0) {
+					if (message !== '') {
+						setMessage('');
+					}
+					const {data: paginateData, totalItem} = Paginator(filteredCurrencies, page, perPage);
+					if (totalPageItems !== totalItem) {
+						setTotalPageItems(totalItem);
+					}
+					return paginateData;
+				}
+				if (filteredCurrencies.length === 0) {
+					setTotalPageItems(0);
+					setMessage('No Result Found');
+				}
+			}
+		},
+		[page, state.currency.query],
+	);
 	// useQuery to fetch data
-	const {data: currencies, isLoading, isError, isPreviousData} = useQuery(['currencies', page], () => fetchCurrencies(page, perPage), {staleTime: 5000, keepPreviousData: true});
+	const {
+		data: currencies,
+		isLoading,
+		isError,
+		isPreviousData,
+	} = useQuery<ICurrencyInfo[]>(['currencies', page], () => fetchCurrencies(page, perPage), {
+		staleTime: 5000,
+		keepPreviousData: true,
+		select: !state?.currency?.query ? undefined : handleSearch,
+	});
 	// check if data is loading
-	if (isLoading) {
+	if (isLoading || isAllCurrenciesLoading) {
 		return (
 			<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto pt-10 '>
 				<Skeleton />
@@ -35,22 +103,15 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 	return (
 		<>
 			<section className='p-10 '>
-				{currencies && (
-					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto  '>
+				{currencies && !message && (
+					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto md:h-[70vh] '>
 						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
 							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
 								<div className='shadow overflow-hidden  border-[1px] border-gray-200 dark:border-zinc-600 sm:rounded-lg'>
 									<table className='min-w-full divide-y-[1px] divide-gray-200 dark:divide-zinc-700 '>
 										<THeadCurrencies />
 										{currencies &&
-											newCurrencies &&
-											newCurrencies?.length < 1 &&
 											currencies?.map((currency: ICurrencyInfo, index: number) => {
-												return <TBodyCurrencies key={index} currency={currency} />;
-											})}
-										{newCurrencies &&
-											newCurrencies?.length > 0 &&
-											newCurrencies?.map((currency: ICurrencyInfo, index: number) => {
 												return <TBodyCurrencies key={index} currency={currency} />;
 											})}
 									</table>
@@ -59,18 +120,15 @@ const Currencies = ({newCurrencies}: CurrencyListProps) => {
 						</div>
 					</div>
 				)}
+				{message && (
+					<div className='text-center text-xl pt-16 flex justify-center items-center'>
+						<span className='bg-red-200 px-4 py-2 rounded-full  dark:bg-red-500'> {message}</span>
+					</div>
+				)}
 			</section>
 
-			<section className='mt-10 h-24 '>
-				{!loading && (
-					<Pagination
-						total={newCurrencies && newCurrencies.length > 0 ? newCurrencies.length : totalCurrency}
-						perPage={perPage}
-						currentPage={page}
-						setCurrentPage={setPage}
-						isPreviousData={isPreviousData}
-					/>
-				)}
+			<section className='mt-10 h-32 '>
+				{currencies && !message && <Pagination total={totalPageItems} perPage={perPage} currentPage={page} setCurrentPage={setPage} isPreviousData={isPreviousData} />}
 			</section>
 		</>
 	);

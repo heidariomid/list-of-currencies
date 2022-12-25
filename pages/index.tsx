@@ -4,7 +4,6 @@ import Header from '../components/Header/Header';
 import {useState} from 'react';
 
 const Home = () => {
-	const [newCurrencies, setNewCurrencies] = useState([]);
 	return (
 		<div className='dark:bg-ocean h-full md:h-screen w-full '>
 			<Head>
@@ -14,8 +13,8 @@ const Home = () => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main>
-				<Header setNewCurrencies={setNewCurrencies} />
-				<Currencies newCurrencies={newCurrencies} />
+				<Header />
+				<Currencies />
 			</main>
 		</div>
 	);

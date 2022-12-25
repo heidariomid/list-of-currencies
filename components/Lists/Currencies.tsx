@@ -88,7 +88,7 @@ const Currencies = () => {
 		select: !state?.currency?.query ? undefined : handleSearch,
 	});
 	// check if data is loading
-	if (isLoading || isAllCurrenciesLoading) {
+	if (isLoading) {
 		return (
 			<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto pt-10 '>
 				<Skeleton />

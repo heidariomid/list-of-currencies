@@ -63,12 +63,12 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 		pages.push(i);
 	}
 	return (
-		<div className='text-center justify-center '>
+		<div className='text-center justify-center transition-all ease-out duration-500 '>
 			<div className='flex flex-row justify-center items-center mb-20 '>
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(1)}
-						className='relative inline-flex items-center px-4  text-sm font-medium rounded-l-full text-gray-400  hover:text-green-500'
+						className='relative inline-flex transition-all ease-out duration-500 items-center px-4  text-sm font-medium rounded-l-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAnglesLeft} />
 					</button>
@@ -76,7 +76,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(currentPage - 1)}
-						className=' relative inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
+						className=' relative transition-all ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAngleLeft} />
 					</button>
@@ -98,7 +98,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== totalPages && (
 					<button
 						onClick={() => setCurrentPage(totalPages)}
-						className=' relative inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
+						className=' relative transition-all ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAnglesRight} />
 					</button>

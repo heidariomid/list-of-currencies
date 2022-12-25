@@ -1,5 +1,4 @@
 export const Paginator = (items, page, perPage) => {
-	console.log(page);
 	page = page || 1;
 	perPage = perPage || 10;
 	const offset = (page - 1) * perPage;

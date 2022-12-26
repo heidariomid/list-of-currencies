@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
-import {fetchAllCurrencies, fetchCurrencies, mockedCurrencies} from '../../FetcherApi/axiosInstance';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
 import TBodyCurrencies from './TBodyCurrencies';
@@ -9,6 +8,7 @@ import THeadCurrencies from './THeadCurrencies';
 import {useStateValue} from '../../store/context/ContextManager';
 import {Paginator} from '../../services/Paginator';
 import ErrorBoundry from '../Error/ErrorBoundry';
+import {fetchAllCurrencies, fetchCurrencies} from '../../FetcherApi/fetchCurrencyAPI';
 const Currencies = () => {
 	const queryClient = useQueryClient();
 	const [page, setPage] = useState<number>(1);
@@ -78,6 +78,7 @@ const Currencies = () => {
 		data: currencies,
 		isLoading,
 		isError,
+		isFetchedAfterMount,
 		isPreviousData,
 	} = useQuery<ICurrencyInfo[]>(['currencies', page], () => fetchCurrencies(page, state?.currency?.perPage), {
 		staleTime: 5000,
@@ -86,13 +87,14 @@ const Currencies = () => {
 	});
 	// prefetch next page data
 	useEffect(() => {
-		if (page !== 1) {
+		if (!isLoading) {
+			console.log('preFetching next page');
 			const nextPage = page + 1;
 			queryClient.prefetchQuery(['currencies', nextPage], () => fetchCurrencies(nextPage, state?.currency?.perPage), {
 				staleTime: 5000,
 			});
 		}
-	}, [page, queryClient]);
+	}, [page, queryClient, isLoading]);
 	// check if data is loading
 	if (isLoading) {
 		return (
@@ -110,7 +112,7 @@ const Currencies = () => {
 		<>
 			<section className='p-10 '>
 				{currencies && !message && (
-					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto md:h-[70vh] '>
+					<div className='flex flex-col max-w-screen-sm md:max-w-screen-xl mx-auto md:h-[65vh] '>
 						<div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
 							<div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
 								<div className='shadow overflow-hidden  border-[1px] border-gray-200 dark:border-zinc-600 sm:rounded-lg'>
@@ -132,7 +134,7 @@ const Currencies = () => {
 					</div>
 				)}
 			</section>
-			<section className='mt-6 h-32 '>
+			<section className='h-32 '>
 				{currencies && !message && (
 					<Pagination total={totalPageItems} perPage={state?.currency?.perPage} currentPage={page} setCurrentPage={setPage} isPreviousData={isPreviousData} />
 				)}

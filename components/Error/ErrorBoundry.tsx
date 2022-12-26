@@ -10,7 +10,6 @@ const ErrorBoundry = () => {
 					<h3 className='uppercase text-gray-600'>please wait for a minute </h3>
 				</div>
 			</div>
-			,
 		</div>
 	);
 };

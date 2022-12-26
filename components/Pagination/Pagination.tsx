@@ -18,7 +18,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 					<div
 						className={`
 						${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-						 hover:bg-green-500  transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
+						 hover:bg-green-500 cursor-pointer  transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
 					>
 						{page}
 					</div>
@@ -31,7 +31,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 						<div
 							className={`
 							${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-							}   hover:bg-green-500   transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
+							}   hover:bg-green-500  cursor-pointer transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
 						>
 							{page}
 						</div>
@@ -44,7 +44,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 					<button onClick={() => setCurrentPage(page)}>
 						<div
 							className={`${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-							}   hover:bg-green-500 hover:px6  transition-all duration-500  flex mx-2 rounded-full px-2  text-center items-center justify-center  text-white`}
+							}   hover:bg-green-500 hover:px6 cursor-pointer transition-all duration-500  flex mx-2 rounded-full px-2  text-center items-center justify-center  text-white`}
 						>
 							{page}
 						</div>
@@ -68,7 +68,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(1)}
-						className='relative inline-flex transition-all ease-out duration-500 items-center px-4  text-sm font-medium rounded-l-full text-gray-400  hover:text-green-500'
+						className='relative inline-flex cursor-pointer transition-all ease-out duration-500 items-center px-4  text-sm font-medium rounded-l-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAnglesLeft} />
 					</button>
@@ -76,7 +76,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(currentPage - 1)}
-						className=' relative transition-all ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
+						className=' relative transition-all cursor-pointer ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAngleLeft} />
 					</button>
@@ -90,7 +90,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 						onClick={() => {
 							if (!isPreviousData) setCurrentPage(currentPage + 1);
 						}}
-						className=' relative inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
+						className=' relative inline-flex  cursor-pointer items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAngleRight} />
 					</button>
@@ -98,7 +98,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				{currentPage !== totalPages && (
 					<button
 						onClick={() => setCurrentPage(totalPages)}
-						className=' relative transition-all ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
+						className=' relative transition-all cursor-pointer ease-out duration-500 inline-flex items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>
 						<FontAwesomeIcon className='w-4 h-4' icon={faAnglesRight} />
 					</button>

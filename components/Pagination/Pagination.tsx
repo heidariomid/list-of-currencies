@@ -64,7 +64,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 	}
 	return (
 		<div className='text-center justify-center transition-all ease-out duration-500 '>
-			<div className='flex flex-row justify-center items-center mb-20 '>
+			<div className='flex flex-row justify-center items-center mb-10 '>
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(1)}

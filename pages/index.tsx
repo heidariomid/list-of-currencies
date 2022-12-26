@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Currencies from '../components/Lists/Currencies';
 import Header from '../components/Header/Header';
-import {useState} from 'react';
 
 const Home = () => {
 	return (

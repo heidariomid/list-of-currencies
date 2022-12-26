@@ -25,9 +25,9 @@ const Currencies = () => {
 	const [totalPageItems, setTotalPageItems] = useState<number>(0);
 	useEffect(() => {
 		if (!isAllCurrenciesLoading) {
-			setTotalPageItems(allCurrencies.length);
+			setTotalPageItems(allCurrencies?.length);
 		}
-	}, [isAllCurrenciesLoading]);
+	}, [allCurrencies?.length, isAllCurrenciesLoading]);
 
 	// handle search
 	const handleSearch = useCallback(
@@ -39,8 +39,8 @@ const Currencies = () => {
 						currency.symbol.toLowerCase().includes(state?.currency?.query?.toLowerCase()),
 				);
 				if (state?.currency?.query === 'empty') {
-					if (totalPageItems !== allCurrencies.length) {
-						setTotalPageItems(allCurrencies.length);
+					if (totalPageItems !== allCurrencies?.length) {
+						setTotalPageItems(allCurrencies?.length);
 						if (page !== 1) {
 							setPage(1);
 						}
@@ -51,7 +51,7 @@ const Currencies = () => {
 
 					return data;
 				}
-				if (filteredCurrencies.length > 0) {
+				if (filteredCurrencies?.length > 0) {
 					if (message !== '') {
 						setMessage('');
 					}
@@ -65,7 +65,7 @@ const Currencies = () => {
 					}
 					return paginateData;
 				}
-				if (filteredCurrencies.length === 0) {
+				if (filteredCurrencies?.length === 0) {
 					setTotalPageItems(0);
 					setMessage('No Result Found');
 				}

@@ -5,7 +5,7 @@ const Skeleton = () => {
 		<div className='relative'>
 			<div
 				role='status'
-				className='relative p-4 space-y-4 w-full  rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700'
+				className='relative p-4 [&>*+*]:mt-4 w-full  rounded border border-gray-200 [&>*+*]:border-t divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700'
 			>
 				<div className='flex justify-between items-center'>
 					<div>

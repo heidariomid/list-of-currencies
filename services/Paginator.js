@@ -6,7 +6,8 @@ export const Paginator = (items, page, perPage) => {
 	let paginatedItems = [],
 		total_pages = 0;
 
-	(paginatedItems = items?.slice(offset)?.slice(0, perPage)), (total_pages = Math.ceil(items?.length / perPage));
+	paginatedItems = items?.slice(offset)?.slice(0, perPage);
+	total_pages = Math.ceil(items?.length / perPage);
 
 	return {
 		page: page,

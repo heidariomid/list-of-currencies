@@ -1,5 +1,7 @@
-import {useCallback, useEffect, useState} from 'react';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
+'use client';
+
+import {useEffect, useState} from 'react';
+import {keepPreviousData, useQuery, useQueryClient} from '@tanstack/react-query';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
@@ -12,91 +14,63 @@ import {fetchAllCurrencies, fetchCurrencies} from '../../FetcherApi/fetchCurrenc
 const Currencies = () => {
 	const queryClient = useQueryClient();
 	const [page, setPage] = useState<number>(1);
-	const [message, setMessage] = useState<string | undefined>('');
 	const [state] = useStateValue();
-
-	// mocked all currencies
-	// const {data: allCurrencies} = useQuery(['mockedAllCurrencies'], allMockedCurrencies);
+	const perPage: number = state?.currency?.perPage;
+	const query: string | null = state?.currency?.query;
 
 	// useQuery to fetch all currencies
-	const {data: allCurrencies, isLoading: isAllCurrenciesLoading} = useQuery(['allCurrencies'], fetchAllCurrencies, {
+	const {data: allCurrencies} = useQuery({
+		queryKey: ['allCurrencies'],
+		queryFn: fetchAllCurrencies,
 		staleTime: 5000,
 	});
-	const [totalPageItems, setTotalPageItems] = useState<number>(0);
-	useEffect(() => {
-		if (!isAllCurrenciesLoading) {
-			setTotalPageItems(allCurrencies?.length);
-		}
-	}, [allCurrencies?.length, isAllCurrenciesLoading]);
-
-	// handle search
-	const handleSearch = useCallback(
-		(data: ICurrencyInfo[]) => {
-			if (allCurrencies) {
-				const filteredCurrencies = allCurrencies?.filter(
-					(currency: ICurrencyInfo) =>
-						currency.name.toLowerCase().includes(state?.currency?.query?.toLowerCase()) ||
-						currency.symbol.toLowerCase().includes(state?.currency?.query?.toLowerCase()),
-				);
-				if (state?.currency?.query === 'empty') {
-					if (totalPageItems !== allCurrencies?.length) {
-						setTotalPageItems(allCurrencies?.length);
-						if (page !== 1) {
-							setPage(1);
-						}
-					}
-					if (message !== '') {
-						setMessage('');
-					}
-
-					return data;
-				}
-				if (filteredCurrencies?.length > 0) {
-					if (message !== '') {
-						setMessage('');
-					}
-
-					const {data: paginateData, totalItem} = Paginator(filteredCurrencies, page, state?.currency?.perPage);
-					if (totalPageItems !== totalItem) {
-						setTotalPageItems(totalItem);
-						if (state?.currency?.query !== '' && page !== 1) {
-							setPage(1);
-						}
-					}
-					return paginateData;
-				}
-				if (filteredCurrencies?.length === 0) {
-					setTotalPageItems(0);
-					setMessage('No Result Found');
-				}
-			}
-		},
-		[page, state?.currency?.query],
-	);
 	// useQuery to fetch data
 	const {
-		data: currencies,
-		isLoading,
+		data: pageCurrencies,
+		isPending,
 		isError,
-		isFetchedAfterMount,
-		isPreviousData,
-	} = useQuery<ICurrencyInfo[]>(['currencies', page], () => fetchCurrencies(page, state?.currency?.perPage), {
+		isPlaceholderData,
+	} = useQuery({
+		queryKey: ['currencies', page],
+		queryFn: () => fetchCurrencies(page, perPage),
 		staleTime: 5000,
-		keepPreviousData: true,
-		select: state?.currency?.query === '' || state?.currency?.query === null ? undefined : handleSearch,
+		placeholderData: keepPreviousData,
 	});
+
+	// handle search
+	const isSearching = query !== null && query !== '' && query !== 'empty';
+	const matches = isSearching
+		? allCurrencies?.filter(
+				(currency: ICurrencyInfo) => currency.name.toLowerCase().includes(query.toLowerCase()) || currency.symbol.toLowerCase().includes(query.toLowerCase()),
+		  )
+		: undefined;
+	const message = matches?.length === 0 ? 'No Result Found' : '';
+	const currencies: ICurrencyInfo[] | undefined = isSearching ? (matches?.length ? Paginator(matches, page, perPage).data : undefined) : pageCurrencies;
+	const knownTotal = isSearching ? matches?.length : allCurrencies?.length;
+	const totalPageItems = knownTotal ?? 0;
+
+	// go back to the first page when a search changes the number of results
+	const [lastTotal, setLastTotal] = useState<number | undefined>(undefined);
+	if (knownTotal !== undefined && knownTotal !== lastTotal) {
+		setLastTotal(knownTotal);
+		if (lastTotal !== undefined && page !== 1) {
+			setPage(1);
+		}
+	}
+
 	// prefetch next page data
 	useEffect(() => {
-		if (!isLoading) {
-			console.log('preFetching next page');
+		if (!isPending) {
 			const nextPage = page + 1;
-			queryClient.prefetchQuery(['currencies', nextPage], () => fetchCurrencies(nextPage, state?.currency?.perPage), {
+			queryClient.prefetchQuery({
+				queryKey: ['currencies', nextPage],
+				queryFn: () => fetchCurrencies(nextPage, perPage),
 				staleTime: 5000,
 			});
 		}
-	}, [page, queryClient, isLoading]);
+	}, [page, perPage, queryClient, isPending]);
 	// check if data is loading
-	if (isLoading) {
+	if (isPending) {
 		return (
 			<div className='flex flex-col max-w-screen-md md:max-w-screen-xl mx-auto pt-10 '>
 				<Skeleton />
@@ -136,7 +110,7 @@ const Currencies = () => {
 			</section>
 			<section className='h-32 '>
 				{currencies && !message && (
-					<Pagination total={totalPageItems} perPage={state?.currency?.perPage} currentPage={page} setCurrentPage={setPage} isPreviousData={isPreviousData} />
+					<Pagination total={totalPageItems} perPage={perPage} currentPage={page} setCurrentPage={setPage} isPlaceholderData={isPlaceholderData} />
 				)}
 			</section>
 		</>

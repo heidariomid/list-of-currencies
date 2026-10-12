@@ -1,3 +1,5 @@
+'use client';
+
 /* This example requires Tailwind CSS v2.0+ */
 import {useState} from 'react';
 import {Switch} from '@headlessui/react';

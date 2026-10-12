@@ -1,5 +1,7 @@
+'use client';
+
 import {Transition} from '@headlessui/react';
-import {Fragment, useState} from 'react';
+import {Fragment} from 'react';
 import {useForm} from 'react-hook-form';
 import {actions} from '../../store/actions/actions';
 import {useStateValue} from '../../store/context/ContextManager';

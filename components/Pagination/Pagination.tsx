@@ -6,12 +6,12 @@ export type PaginationProps = {
 	currentPage: number;
 	perPage: number;
 	setCurrentPage: (page: number) => void;
-	isPreviousData: boolean;
+	isPlaceholderData: boolean;
 };
-const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData}: PaginationProps) => {
+const Pagination = ({total, perPage, currentPage, setCurrentPage, isPlaceholderData}: PaginationProps) => {
 	const isDark = false;
 	const totalPages = Math.ceil(total / perPage);
-	const ButtonHandler = ({setCurrentPage, page}: any) => {
+	const ButtonHandler = ({setCurrentPage, page}: Pick<PaginationProps, 'setCurrentPage'> & {page: number}) => {
 		if (totalPages === currentPage) {
 			return (
 				<button onClick={() => setCurrentPage(page)}>
@@ -58,7 +58,7 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 			</span>
 		);
 	};
-	const pages: any = [];
+	const pages: number[] = [];
 	for (let i = 1; i <= totalPages; i++) {
 		pages.push(i);
 	}
@@ -86,9 +86,9 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPreviousData
 				})}
 				{currentPage !== totalPages && (
 					<button
-						disabled={currentPage === totalPages || isPreviousData}
+						disabled={currentPage === totalPages || isPlaceholderData}
 						onClick={() => {
-							if (!isPreviousData) setCurrentPage(currentPage + 1);
+							if (!isPlaceholderData) setCurrentPage(currentPage + 1);
 						}}
 						className=' relative inline-flex  cursor-pointer items-center px-4  text-sm font-medium rounded-r-full text-gray-400  hover:text-green-500'
 					>

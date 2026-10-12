@@ -1,5 +1,6 @@
+import Image from 'next/image';
 import {CurrencyListProps} from '../../interfaces/ICurrencyInfo';
-import CurrencyFormat from 'react-currency-format';
+import {formatNumber} from '../../utils/formatNumber';
 
 const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 	const orderStatusStyle = (change: number) => {
@@ -21,7 +22,7 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 					<td className='px-2 py-4 whitespace-nowrap'>
 						<div className='flex items-center'>
 							<div className='flex-shrink-0 h-10 w-10'>
-								<img className='h-10 w-10 rounded-full' src={currency.image} alt='' />
+								<Image className='h-10 w-10 rounded-full' src={currency.image} alt='' width={40} height={40} unoptimized />
 							</div>
 							<div className='ml-4'>
 								<div className='text-sm font-medium text-gray-900 dark:text-white'>{currency.name}</div>
@@ -31,7 +32,7 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap'>
 						<div className='text-sm text-gray-900 dark:text-white'>
-							<CurrencyFormat value={currency?.current_price?.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+							{formatNumber(currency?.current_price, 'usdWithCents')}
 						</div>
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap '>
@@ -46,7 +47,7 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 								</svg>
 							)}
 							<span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${orderStatusStyle(currency.price_change_percentage_24h)} `}>
-								<CurrencyFormat value={Math.abs(Number(currency?.price_change_percentage_24h?.toFixed(2)))} displayType={'text'} suffix={'%'} />
+								{formatNumber(currency?.price_change_percentage_24h, 'percent')}
 							</span>
 						</div>
 					</td>
@@ -62,18 +63,18 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 								</svg>
 							)}
 							<span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${orderStatusStyle(currency.price_change_percentage_7d_in_currency)}`}>
-								<CurrencyFormat value={Math.abs(Number(currency?.price_change_percentage_7d_in_currency?.toFixed(2)))} displayType={'text'} suffix={'%'} />
+								{formatNumber(currency?.price_change_percentage_7d_in_currency, 'percent')}
 							</span>
 						</div>
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
-						<CurrencyFormat value={currency?.market_cap?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+						{formatNumber(currency?.market_cap, 'usdWhole')}
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white'>
-						<CurrencyFormat value={currency?.total_volume?.toFixed(0)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+						{formatNumber(currency?.total_volume, 'usdWhole')}
 					</td>
 					<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-white text-right '>
-						<CurrencyFormat value={currency?.circulating_supply?.toFixed(0)} displayType={'text'} thousandSeparator={true} />
+						{formatNumber(currency?.circulating_supply, 'whole')}
 						<span className='text-gray-400 ml-2 uppercase'>{currency.symbol}</span>
 					</td>
 				</tr>

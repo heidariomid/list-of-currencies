@@ -1,5 +1,77 @@
-@tailwind base;
+@import 'tailwindcss' source(none);
+@source '../app';
+@source '../components';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--color-primary: #1e90ff;
+	--color-secondary: #ff6347;
+	--color-tertiary: #ffd700;
+	--color-ocean: #1f2937;
+
+	/* Tailwind 3 values for the palette shades this app uses, so the upgrade does not shift any colour */
+	--color-gray-200: #e5e7eb;
+	--color-gray-300: #d1d5db;
+	--color-gray-400: #9ca3af;
+	--color-gray-500: #6b7280;
+	--color-gray-600: #4b5563;
+	--color-gray-700: #374151;
+	--color-gray-800: #1f2937;
+	--color-gray-900: #111827;
+	--color-zinc-400: #a1a1aa;
+	--color-zinc-600: #52525b;
+	--color-zinc-700: #3f3f46;
+	--color-green-500: #22c55e;
+	--color-red-200: #fecaca;
+	--color-red-500: #ef4444;
+	--color-indigo-500: #6366f1;
+	--color-orange-200: #fed7aa;
+
+	--animate-wiggle: wiggle 2s ease-in infinite;
+	--animate-textColor: textColor 6s ease-in infinite;
+
+	@keyframes wiggle {
+		0%,
+		100% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.1);
+		}
+	}
+	@keyframes textColor {
+		0%,
+		100% {
+			color: #fff;
+		}
+		50% {
+			color: #d946ef;
+		}
+	}
+}
+
 @layer base {
+	/* Tailwind 3 defaults that Tailwind 4 dropped: border colour, button cursor, placeholder colour, table cell padding */
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
+	input::placeholder,
+	textarea::placeholder {
+		color: var(--color-gray-400);
+	}
+	th,
+	td {
+		padding: 1px;
+	}
 	* {
 		box-sizing: border-box;
 	}
@@ -9,7 +81,7 @@
 		padding: 0;
 	}
 	body {
-		font-family: 'Roboto', sans-serif;
+		font-family: var(--font-roboto), 'Roboto', sans-serif;
 	}
 	a {
 		color: inherit;
@@ -24,7 +96,20 @@
 	}
 }
 
-@tailwind components;
+@layer components {
+	.input {
+		@apply px-2 rounded-full text-lg  font-light focus:outline-none hover:border-gray-400 hover:transition-colors;
+	}
+	.span {
+		@apply p-1 m-1 text-sm;
+	}
+	.btn {
+		@apply text-white  text-center  p-2 bg-black;
+	}
+	.text-gradient {
+		@apply bg-gradient-to-br from-indigo-600 via-violet-500 to-fuchsia-500  text-transparent bg-clip-text;
+	}
+}
 
 @layer utilities {
 	input[type='number']::-webkit-inner-spin-button,
@@ -33,17 +118,3 @@
 		margin: 0;
 	}
 }
-
-.input {
-	@apply px-2 rounded-full text-lg  font-light focus:outline-none hover:border-gray-400 hover:transition-colors;
-}
-.span {
-	@apply p-1 m-1 text-sm;
-}
-.btn {
-	@apply text-white  text-center  p-2 bg-black;
-}
-.text-gradient {
-	@apply bg-gradient-to-br from-indigo-600 via-violet-500 to-fuchsia-500  text-transparent bg-clip-text;
-}
-@tailwind utilities;

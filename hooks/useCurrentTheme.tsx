@@ -1,8 +1,20 @@
+'use client';
+
+import {useEffect, useState} from 'react';
 import {useTheme} from 'next-themes';
 
-// use this hook to get the current theme
+// resolvedTheme is wrong on the server. Wait until mount so the switch matches the saved theme.
 export const useCurrentTheme = () => {
 	const {theme, resolvedTheme, setTheme} = useTheme();
+	const [mounted, setMounted] = useState(false);
 
-	return {currentTheme: resolvedTheme ?? 'light', theme, setTheme};
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	return {
+		currentTheme: mounted ? (resolvedTheme ?? 'light') : undefined,
+		theme,
+		setTheme,
+	};
 };

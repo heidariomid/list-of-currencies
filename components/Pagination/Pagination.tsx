@@ -1,6 +1,7 @@
-// import {useReactiveVar} from '@apollo/client';
 import {faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {pageItems} from './pageItems';
+
 export type PaginationProps = {
 	total: number;
 	currentPage: number;
@@ -8,63 +9,15 @@ export type PaginationProps = {
 	setCurrentPage: (page: number) => void;
 	isPlaceholderData: boolean;
 };
+
+export {pageItems};
+
 const Pagination = ({total, perPage, currentPage, setCurrentPage, isPlaceholderData}: PaginationProps) => {
-	const isDark = false;
 	const totalPages = Math.ceil(total / perPage);
-	const ButtonHandler = ({setCurrentPage, page}: Pick<PaginationProps, 'setCurrentPage'> & {page: number}) => {
-		if (totalPages === currentPage) {
-			return (
-				<button onClick={() => setCurrentPage(page)}>
-					<div
-						className={`
-						${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-						 hover:bg-green-500 cursor-pointer  transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
-					>
-						{page}
-					</div>
-				</button>
-			);
-		} else if (totalPages !== currentPage && currentPage !== 1) {
-			return (
-				<>
-					<button onClick={() => setCurrentPage(page)}>
-						<div
-							className={`
-							${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-							}   hover:bg-green-500  cursor-pointer transition-all duration-500  flex mx-2 px-2 rounded-full  text-center items-center justify-center  text-white`}
-						>
-							{page}
-						</div>
-					</button>
-				</>
-			);
-		} else if (currentPage === 1) {
-			return (
-				<>
-					<button onClick={() => setCurrentPage(page)}>
-						<div
-							className={`${currentPage === page ? `px-6 ${isDark && ' text-white'} bg-green-500` : 'bg-gray-400'}
-							}   hover:bg-green-500 hover:px6 cursor-pointer transition-all duration-500  flex mx-2 rounded-full px-2  text-center items-center justify-center  text-white`}
-						>
-							{page}
-						</div>
-					</button>
-				</>
-			);
-		}
-		return (
-			<span className='mx-5'>
-				{currentPage} of {totalPages}
-			</span>
-		);
-	};
-	const pages: number[] = [];
-	for (let i = 1; i <= totalPages; i++) {
-		pages.push(i);
-	}
+	const pages = pageItems(currentPage, totalPages);
 	return (
 		<div className='text-center justify-center transition-all ease-out duration-500 '>
-			<div className='flex flex-row justify-center items-center mb-10 '>
+			<div className='flex flex-row flex-wrap justify-center items-center gap-y-2 mb-10 '>
 				{currentPage !== 1 && (
 					<button
 						onClick={() => setCurrentPage(1)}
@@ -81,9 +34,21 @@ const Pagination = ({total, perPage, currentPage, setCurrentPage, isPlaceholderD
 						<FontAwesomeIcon className='w-4 h-4' icon={faAngleLeft} />
 					</button>
 				)}
-				{pages.map((page: number) => {
-					return <ButtonHandler key={page} page={page} setCurrentPage={setCurrentPage} />;
-				})}
+				{pages.map((page, index) =>
+					page === 'ellipsis' ? (
+						<span key={`ellipsis-${index}`} className='mx-2 text-gray-400'>
+							…
+						</span>
+					) : (
+						<button key={page} onClick={() => setCurrentPage(page)}>
+							<div
+								className={`${page === currentPage ? 'bg-green-500 px-6' : 'bg-gray-400'} hover:bg-green-500 cursor-pointer transition-all duration-500 flex mx-2 px-2 rounded-full text-center items-center justify-center text-white`}
+							>
+								{page}
+							</div>
+						</button>
+					),
+				)}
 				{currentPage !== totalPages && (
 					<button
 						disabled={currentPage === totalPages || isPlaceholderData}

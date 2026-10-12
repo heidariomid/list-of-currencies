@@ -1,4 +1,0 @@
-export const actions = {
-	SEARCH_CURRENCY: 'SEARCH_CURRENCY',
-	SEARCH_MESSAGE: 'SEARCH_MESSAGE',
-};

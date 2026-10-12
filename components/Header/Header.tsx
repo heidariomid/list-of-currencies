@@ -3,11 +3,15 @@ import SearchCrypto from '../Search/SearchCrypto';
 
 const Header = () => {
 	return (
-		<div className='flex flex-col md:flex-row max-w-screen-xl  pt-4 md:pt-20 w-full  justify-between items-center md:mx-auto lg:px-20'>
-			<SearchCrypto />
-			<h1 className='dark:animate-textColor font-bold mr-0 lg:mr-48 md:text-xl my-4 md:my-0'>Cryptocurrency Prices</h1>
-			<ToggleBtn />
-		</div>
+		<header className='flex w-full min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between'>
+			<h1 className='shrink-0 text-lg font-semibold tracking-tight text-gray-900 dark:text-white md:text-xl'>Cryptocurrency Prices</h1>
+			<div className='flex w-full min-w-0 items-center gap-3 md:w-auto md:max-w-md md:justify-end'>
+				<div className='min-w-0 flex-1'>
+					<SearchCrypto />
+				</div>
+				<ToggleBtn />
+			</div>
+		</header>
 	);
 };
 

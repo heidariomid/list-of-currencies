@@ -27,28 +27,6 @@
 	--color-red-500: #ef4444;
 	--color-indigo-500: #6366f1;
 	--color-orange-200: #fed7aa;
-
-	--animate-wiggle: wiggle 2s ease-in infinite;
-	--animate-textColor: textColor 6s ease-in infinite;
-
-	@keyframes wiggle {
-		0%,
-		100% {
-			transform: scale(1);
-		}
-		50% {
-			transform: scale(1.1);
-		}
-	}
-	@keyframes textColor {
-		0%,
-		100% {
-			color: #fff;
-		}
-		50% {
-			color: #d946ef;
-		}
-	}
 }
 
 @layer base {
@@ -71,6 +49,16 @@
 	th,
 	td {
 		padding: 1px;
+	}
+	/* Pins inside the table card's overflow box. That box scrolls both ways and stays within the page. */
+	thead th {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background-color: #000;
+	}
+	.dark thead th {
+		background-color: var(--color-ocean);
 	}
 	* {
 		box-sizing: border-box;

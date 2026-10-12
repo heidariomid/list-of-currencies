@@ -2,7 +2,6 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {axiosInstance} from '../../FetcherApi/axiosInstance';
 import Currencies from './Currencies';
 
 const coins = Array.from({length: 15}, (_, index) => {
@@ -44,10 +43,6 @@ vi.mock('next/navigation', () => ({
 	}),
 }));
 
-vi.mock('../../FetcherApi/axiosInstance', () => ({
-	axiosInstance: {get: vi.fn()},
-}));
-
 vi.mock('./TBodyCurrencies', () => ({
 	default: ({currency}: {currency: {name: string}}) => (
 		<tr>
@@ -60,12 +55,19 @@ describe('Currencies', () => {
 	beforeEach(() => {
 		navigation.search = '';
 		navigation.push.mockClear();
-		vi.mocked(axiosInstance.get).mockReset();
-		vi.mocked(axiosInstance.get).mockResolvedValue({data: coins});
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue({
+				ok: true,
+				status: 200,
+				json: async () => coins,
+			}),
+		);
 	});
 
 	afterEach(() => {
 		cleanup();
+		vi.unstubAllGlobals();
 	});
 
 	it('fetches the top coins once and does not call the API again when the page changes', async () => {
@@ -79,8 +81,8 @@ describe('Currencies', () => {
 
 		expect(await screen.findByText('Coin 1')).toBeTruthy();
 		expect(screen.queryByText('Coin 11')).toBeNull();
-		expect(axiosInstance.get).toHaveBeenCalledTimes(1);
-		expect(String(vi.mocked(axiosInstance.get).mock.calls[0][0])).toContain('per_page=250');
+		expect(fetch).toHaveBeenCalledTimes(1);
+		expect(vi.mocked(fetch).mock.calls[0][0]).toBe('/api/markets');
 
 		fireEvent.click(screen.getByRole('button', {name: '2'}));
 		rerender(
@@ -92,6 +94,6 @@ describe('Currencies', () => {
 		expect(screen.getByText('Coin 11')).toBeTruthy();
 		expect(screen.queryByText('Coin 1')).toBeNull();
 		expect(navigation.push).toHaveBeenCalledWith('/?page=2', {scroll: false});
-		expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+		expect(fetch).toHaveBeenCalledTimes(1);
 	});
 });

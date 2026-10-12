@@ -1,7 +1,6 @@
 'use client';
 
 import {useQuery} from '@tanstack/react-query';
-import axios from 'axios';
 import {ICurrencyInfo} from '../../interfaces/ICurrencyInfo';
 import Skeleton from '../Loading/Skeleton';
 import Pagination from '../Pagination/Pagination';
@@ -9,7 +8,7 @@ import TBodyCurrencies from './TBodyCurrencies';
 import THeadCurrencies from './THeadCurrencies';
 import {Paginator} from '../../services/Paginator';
 import ErrorBoundry from '../Error/ErrorBoundry';
-import {fetchCurrencies} from '../../FetcherApi/fetchCurrencyAPI';
+import {fetchCurrencies, MarketsError} from '../../FetcherApi/fetchCurrencyAPI';
 import {useListParams} from '../../hooks/useListParams';
 import {sortCurrencies} from '../../utils/sortCurrencies';
 
@@ -29,10 +28,12 @@ const Currencies = () => {
 		queryFn: fetchCurrencies,
 		staleTime: FIVE_MINUTES,
 		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
 		retry: (failureCount, error) => {
-			if (axios.isAxiosError(error) && error.response?.status === 429) return false;
+			if (error instanceof MarketsError && error.status === 429) return false;
 			return failureCount < 2;
 		},
+		retryOnMount: (query) => !(query.state.error instanceof MarketsError && query.state.error.status === 429),
 	});
 
 	const term = q.trim().toLowerCase();
@@ -52,7 +53,7 @@ const Currencies = () => {
 		);
 	}
 	if (isError) {
-		const reason = axios.isAxiosError(error) && error.response?.status === 429 ? 'rate-limit' : 'generic';
+		const reason = error instanceof MarketsError && error.status === 429 ? 'rate-limit' : 'generic';
 		return <ErrorBoundry reason={reason} />;
 	}
 

@@ -1,12 +1,17 @@
-import {axiosInstance} from './axiosInstance';
 import {ICurrencyInfo} from '../interfaces/ICurrencyInfo';
 
-const LIST_SIZE = 250;
+export class MarketsError extends Error {
+	status: number;
 
-// One request covers search and every page. CoinGecko caps this call at 250.
+	constructor(status: number) {
+		super('Markets request failed');
+		this.name = 'MarketsError';
+		this.status = status;
+	}
+}
+
 export const fetchCurrencies = async () => {
-	const {data} = await axiosInstance.get<ICurrencyInfo[]>(
-		`/coins/markets?vs_currency=usd&order=market_cap_desc&page=1&per_page=${LIST_SIZE}&price_change_percentage=24h,7d`,
-	);
-	return data;
+	const response = await fetch('/api/markets');
+	if (!response.ok) throw new MarketsError(response.status);
+	return (await response.json()) as ICurrencyInfo[];
 };

@@ -3,6 +3,7 @@ import {notFound, redirect} from 'next/navigation';
 import CoinPage, {type CoinPageError} from '../../../components/Coin/CoinPage';
 import {normalizeCoinId} from '../../../lib/coinId';
 import {detailFromMarket} from '../../../lib/detailFromMarket';
+import {findMarket} from '../../../lib/findMarket';
 import {getKucoinChart} from '../../../lib/kucoinChart';
 import {getMarkets} from '../../../lib/markets';
 import {statusOf} from '../../../lib/upstream';
@@ -18,7 +19,7 @@ export async function generateMetadata({params}: CoinRouteProps): Promise<Metada
 	if (!coinId) return {title: 'Coin'};
 	try {
 		const coins = await getMarkets();
-		const coin = coins.find((item) => item.id === coinId);
+		const coin = findMarket(coins, coinId);
 		if (!coin) return {title: 'Coin'};
 		return {title: `${coin.name} (${coin.symbol.toUpperCase()}) price`, description: `${coin.name} price, market stats, and chart`};
 	} catch {
@@ -44,7 +45,7 @@ export default async function Page({params}: CoinRouteProps) {
 
 	try {
 		const coins = await getMarkets();
-		const row = coins.find((item) => item.id === coinId);
+		const row = findMarket(coins, coinId);
 		coin = row ? detailFromMarket(row) : null;
 		if (!row || !coin) error = 'missing';
 		else {

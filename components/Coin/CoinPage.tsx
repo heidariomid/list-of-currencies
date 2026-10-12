@@ -9,6 +9,7 @@ import {fetchCoinChart, MarketsError} from '../../FetcherApi/fetchCurrencyAPI';
 import type {CoinChart, CoinDetail} from '../../interfaces/ICoinDetail';
 import type {ChartRange} from '../../utils/chartSeries';
 import {formatCompactUsd, formatSignedPercent, formatUpdated, formatUsd} from '../../utils/formatNumber';
+import CoinLogo from './CoinLogo';
 import PriceChart from './PriceChart';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
@@ -102,9 +103,7 @@ function CoinDetailView({id, coin, initialChart}: {id: string; coin: CoinDetail;
 	return (
 		<>
 			<div className='mt-6 flex items-center gap-3'>
-				<span className='flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gray-100 text-base font-semibold text-gray-700 dark:bg-zinc-700 dark:text-zinc-200'>
-					{coin.symbol.slice(0, 1).toUpperCase()}
-				</span>
+				<CoinLogo symbol={coin.symbol} size={48} />
 				<div className='min-w-0'>
 					<div className='flex flex-wrap items-center gap-2'>
 						<h1 className='text-2xl font-semibold tracking-tight text-gray-900 dark:text-white md:text-3xl'>{coin.name}</h1>

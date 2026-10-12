@@ -65,8 +65,8 @@ const Currencies = () => {
 						<table className='w-max min-w-full divide-y-[1px] divide-gray-200 dark:divide-zinc-700'>
 							<THeadCurrencies sort={sort} dir={dir} onSort={setSort} />
 							<tbody>
-								{currencies.map((currency: ICurrencyInfo) => {
-									return <TBodyCurrencies key={currency.id} currency={currency} />;
+								{currencies.map((currency: ICurrencyInfo, index) => {
+									return <TBodyCurrencies key={currency.id} currency={currency} rank={(page - 1) * PER_PAGE + index + 1} />;
 								})}
 							</tbody>
 						</table>

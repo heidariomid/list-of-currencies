@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import type {MouseEvent} from 'react';
+import CoinLogo from '../Coin/CoinLogo';
 import {CurrencyListProps} from '../../interfaces/ICurrencyInfo';
 import {formatNumber, formatUsd} from '../../utils/formatNumber';
 
@@ -31,7 +32,7 @@ const ChangeCell = ({change}: {change: number}) => {
 	);
 };
 
-const TBodyCurrencies = ({currency}: CurrencyListProps) => {
+const TBodyCurrencies = ({currency, rank}: CurrencyListProps & {rank: number}) => {
 	const router = useRouter();
 	if (!currency?.id) return null;
 	const href = `/coin/${currency.id}`;
@@ -56,12 +57,10 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 			}}
 			className='group cursor-pointer bg-white border-b border-gray-200 hover:bg-gray-50 dark:bg-ocean dark:border-gray-700 dark:hover:bg-zinc-700'
 		>
-			<td className='px-4 py-3 text-sm text-gray-500 dark:text-zinc-400'>{currency.market_cap_rank}</td>
+			<td className='px-4 py-3 text-sm text-gray-500 dark:text-zinc-400'>{rank}</td>
 			<td className='px-12 py-3 whitespace-nowrap'>
 				<Link href={href} prefetch={false} onClick={(event) => event.stopPropagation()} className='flex items-center'>
-					<span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 dark:bg-zinc-700 dark:text-zinc-200'>
-						{currency.symbol.slice(0, 1).toUpperCase()}
-					</span>
+					<CoinLogo symbol={currency.symbol} />
 					<div className='ml-4'>
 						<div className='text-sm font-medium text-gray-900 group-hover:text-primary dark:text-white'>{currency.name}</div>
 						<div className='text-sm font-medium text-gray-500 dark:text-zinc-400 uppercase'>{currency.symbol}</div>
@@ -74,9 +73,9 @@ const TBodyCurrencies = ({currency}: CurrencyListProps) => {
 			<td className='px-10 py-3 whitespace-nowrap tabular-nums'>
 				<ChangeCell change={currency.price_change_percentage_24h} />
 			</td>
+			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatNumber(currency.total_volume, 'usdWhole')}</td>
 			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatUsd(currency.high_24h)}</td>
 			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatUsd(currency.low_24h)}</td>
-			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatNumber(currency.total_volume, 'usdWhole')}</td>
 		</tr>
 	);
 };

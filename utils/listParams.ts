@@ -1,10 +1,10 @@
-export const SORT_KEYS = ['market_cap_rank', 'current_price', 'price_change_percentage_24h', 'price_change_percentage_7d_in_currency', 'market_cap'] as const;
+export const SORT_KEYS = ['current_price', 'price_change_percentage_24h', 'total_volume'] as const;
 
 export type SortKey = (typeof SORT_KEYS)[number];
 export type SortDir = 'asc' | 'desc';
 
-export const DEFAULT_SORT: SortKey = 'market_cap_rank';
-export const DEFAULT_DIR: SortDir = 'asc';
+export const DEFAULT_SORT: SortKey = 'total_volume';
+export const DEFAULT_DIR: SortDir = 'desc';
 
 export type ListParams = {
 	page: number;
@@ -18,11 +18,12 @@ const isSortKey = (value: string | null): value is SortKey => SORT_KEYS.some((ke
 export const parseListParams = (searchParams: {get(name: string): string | null}): ListParams => {
 	const pageRaw = Number(searchParams.get('page'));
 	const sortRaw = searchParams.get('sort');
+	const dirRaw = searchParams.get('dir');
 	return {
 		page: Number.isInteger(pageRaw) && pageRaw > 1 ? pageRaw : 1,
 		q: searchParams.get('q') ?? '',
 		sort: isSortKey(sortRaw) ? sortRaw : DEFAULT_SORT,
-		dir: searchParams.get('dir') === 'desc' ? 'desc' : DEFAULT_DIR,
+		dir: dirRaw === 'asc' || dirRaw === 'desc' ? dirRaw : DEFAULT_DIR,
 	};
 };
 

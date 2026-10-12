@@ -1,6 +1,10 @@
-import Image from 'next/image';
+'use client';
+
+import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import type {MouseEvent} from 'react';
 import {CurrencyListProps} from '../../interfaces/ICurrencyInfo';
-import {formatNumber} from '../../utils/formatNumber';
+import {formatNumber, formatUsd} from '../../utils/formatNumber';
 
 const changeClass = (change: number) => {
 	if (change > 0) return 'text-green-500';
@@ -28,41 +32,51 @@ const ChangeCell = ({change}: {change: number}) => {
 };
 
 const TBodyCurrencies = ({currency}: CurrencyListProps) => {
+	const router = useRouter();
 	if (!currency?.id) return null;
+	const href = `/coin/${currency.id}`;
+	const openCoin = (event: MouseEvent<HTMLTableRowElement>) => {
+		if (event.button !== 0) return;
+		if (event.target instanceof Element && event.target.closest('a')) return;
+		if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+			window.open(href, '_blank', 'noopener,noreferrer');
+			return;
+		}
+		router.push(href);
+	};
 
 	return (
-		<tr key={currency.id} className='bg-white border-b border-gray-200 hover:bg-gray-50 dark:bg-ocean dark:border-gray-700 dark:hover:bg-zinc-700'>
+		<tr
+			key={currency.id}
+			onClick={openCoin}
+			onAuxClick={(event) => {
+				if (event.button !== 1) return;
+				if (event.target instanceof Element && event.target.closest('a')) return;
+				window.open(href, '_blank', 'noopener,noreferrer');
+			}}
+			className='group cursor-pointer bg-white border-b border-gray-200 hover:bg-gray-50 dark:bg-ocean dark:border-gray-700 dark:hover:bg-zinc-700'
+		>
 			<td className='px-4 py-3 text-sm text-gray-500 dark:text-zinc-400'>{currency.market_cap_rank}</td>
 			<td className='px-12 py-3 whitespace-nowrap'>
-				<div className='flex items-center'>
-					<div className='flex-shrink-0 h-10 w-10'>
-						<Image className='h-10 w-10 rounded-full' src={currency.image} alt='' width={40} height={40} unoptimized />
-					</div>
+				<Link href={href} prefetch={false} onClick={(event) => event.stopPropagation()} className='flex items-center'>
+					<span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 dark:bg-zinc-700 dark:text-zinc-200'>
+						{currency.symbol.slice(0, 1).toUpperCase()}
+					</span>
 					<div className='ml-4'>
-						<div className='text-sm font-medium text-gray-900 dark:text-white'>{currency.name}</div>
+						<div className='text-sm font-medium text-gray-900 group-hover:text-primary dark:text-white'>{currency.name}</div>
 						<div className='text-sm font-medium text-gray-500 dark:text-zinc-400 uppercase'>{currency.symbol}</div>
 					</div>
-				</div>
+				</Link>
 			</td>
 			<td className='px-6 py-3 whitespace-nowrap tabular-nums'>
-				<div className='text-sm text-gray-900 dark:text-white'>{formatNumber(currency.current_price, 'usdWithCents')}</div>
+				<div className='text-sm text-gray-900 dark:text-white'>{formatUsd(currency.current_price)}</div>
 			</td>
 			<td className='px-10 py-3 whitespace-nowrap tabular-nums'>
 				<ChangeCell change={currency.price_change_percentage_24h} />
 			</td>
-			<td className='px-10 py-3 whitespace-nowrap tabular-nums'>
-				<ChangeCell change={currency.price_change_percentage_7d_in_currency} />
-			</td>
-			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>
-				{formatNumber(currency.market_cap, 'usdWhole')}
-			</td>
-			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>
-				{formatNumber(currency.total_volume, 'usdWhole')}
-			</td>
-			<td className='px-10 py-3 whitespace-nowrap text-sm text-gray-500 text-right tabular-nums dark:text-white'>
-				{formatNumber(currency.circulating_supply, 'whole')}
-				<span className='text-gray-400 ml-2 uppercase'>{currency.symbol}</span>
-			</td>
+			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatUsd(currency.high_24h)}</td>
+			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatUsd(currency.low_24h)}</td>
+			<td className='px-6 py-3 whitespace-nowrap text-sm text-gray-500 tabular-nums dark:text-white'>{formatNumber(currency.total_volume, 'usdWhole')}</td>
 		</tr>
 	);
 };

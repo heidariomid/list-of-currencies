@@ -17,10 +17,9 @@ const columns: Column[] = [
 	{label: 'COINS', className: 'px-12 py-3 text-left text-xs font-medium  uppercase tracking-wider'},
 	{label: 'PRICE', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider', sortKey: 'current_price'},
 	{label: '24H', className: 'px-10 py-3 text-left text-xs font-medium  uppercase tracking-wider', sortKey: 'price_change_percentage_24h'},
-	{label: '7D', className: 'px-10 py-3 text-left text-xs font-medium  uppercase tracking-wider', sortKey: 'price_change_percentage_7d_in_currency'},
-	{label: 'MARKET CAP', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider', sortKey: 'market_cap'},
-	{label: 'TOTAL VOLUME', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider'},
-	{label: 'CIRCULATING SUPPLY', className: 'px-10 py-3 text-left text-xs font-medium  uppercase tracking-wider'},
+	{label: 'HIGH', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider'},
+	{label: 'LOW', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider'},
+	{label: 'VOLUME', className: 'px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider', sortKey: 'total_volume'},
 ];
 
 const THeadCurrencies = ({sort, dir, onSort}: THeadCurrenciesProps) => {
